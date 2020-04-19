@@ -1,0 +1,29 @@
+version: '2'
+services:
+
+    mongodb:
+      image: 'mongo:4.0'
+      container_name: 'mongo'
+      environment:
+        MONGO_DATA_DIR: '/data/db'
+        MONGO_LOG_DIR: '/dev/null'
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: password
+      volumes:
+        - './data/mongodb/data:/data'
+      command: 'mongod --smallfiles --logpath=/dev/null'
+      ports:
+        - 27018:27017
+
+#    node-app:
+#      container_name: 'node-app'
+#      depends_on:
+#        - "mongodb"
+#      build:
+#        context: .
+#        dockerfile: Dockerfile
+#      environment:
+#        MONGODB_URI: 'mongodb://root:password@mongodb:27017'
+#        WAIT_HOSTS:  mongodb:27017
+#      ports:
+#        - 8000:8000
