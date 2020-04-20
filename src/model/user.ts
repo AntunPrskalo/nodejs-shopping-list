@@ -57,7 +57,7 @@ UserSchema.statics.parseValidationError = function (error: Error.ValidationError
     let response_arr = []
     for (let prop in error.errors) {
         let response_ob = {};
-        response_ob['field'] = error.errors[prop].path;
+        response_ob['field'] = prop;
         response_ob['value'] = error.errors[prop].value;
         response_ob['err_msg'] = error.errors[prop].message;
         response_arr.push(response_ob)

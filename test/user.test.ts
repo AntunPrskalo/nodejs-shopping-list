@@ -7,7 +7,13 @@ const chaiHttp = require('chai-http');
 const app = require('../src/app');
 const randomstring = require('randomstring');
 const sinon = require('sinon');
+const fs = require('fs')
+const path = require('path')
+const jwt = require('jsonwebtoken')
+
 const should = chai.should();
+const privateKEY  = fs.readFileSync(path.join(__dirname, '../jwtRS256.key'), 'utf8');
+const publicKEY  = fs.readFileSync(path.join(__dirname, '../jwtRS256.key.pub'), 'utf8');
 
 //sinon.stub(console, "log")
 chai.use(chaiHttp);
@@ -16,6 +22,15 @@ describe('User Routes Test', () => {
     let registered_user;
     let registered_password;
     let registered_user_token;
+    let invalid_token = randomstring.generate(10);
+    let expired_token = jwt.sign({
+        "_id": randomstring.generate(7),
+        "email": randomstring.generate(7),
+    }, privateKEY, {
+        'issuer': 'Shopping List API',
+        'expiresIn': 0,
+        'algorithm':  'RS256',
+    });
 
     describe('POST /register', () => {
 
@@ -317,6 +332,36 @@ describe('User Routes Test', () => {
             chai.request(app)
                 .post('/resetPassword')
                 .set('Content-Type', 'application/json')
+                .send(JSON.stringify({ "currentPassword": registered_password, "newPassword": new_password }))
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
+        it('Reset password fail. Unauthorized. Invalid token.', (done) => {
+            const new_password = randomstring.generate(7);
+            chai.request(app)
+                .post('/resetPassword')
+                .set('Content-Type', 'application/json')
+                .set('token', invalid_token)
+                .send(JSON.stringify({ "currentPassword": registered_password, "newPassword": new_password }))
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
+        it('Reset password fail. Unauthorized. Expired token.', (done) => {
+            const new_password = randomstring.generate(7);
+            chai.request(app)
+                .post('/resetPassword')
+                .set('Content-Type', 'application/json')
+                .set('token', expired_token)
                 .send(JSON.stringify({ "currentPassword": registered_password, "newPassword": new_password }))
                 .end((err, res) => {
                     res.should.have.status(400);

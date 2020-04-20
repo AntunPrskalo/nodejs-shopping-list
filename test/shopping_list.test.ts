@@ -7,7 +7,13 @@ const chaiHttp = require('chai-http');
 const app = require('../src/app');
 const randomstring = require('randomstring');
 const sinon = require('sinon');
+const fs = require('fs')
+const path = require('path')
+const jwt = require('jsonwebtoken')
+
 const should = chai.should();
+const privateKEY  = fs.readFileSync(path.join(__dirname, '../jwtRS256.key'), 'utf8');
+const publicKEY  = fs.readFileSync(path.join(__dirname, '../jwtRS256.key.pub'), 'utf8');
 
 sinon.stub(console, "log")
 chai.use(chaiHttp);
@@ -19,6 +25,16 @@ describe('Shopping List Routes Test', () => {
     let registered_user_token;
     let shopping_list_empty_name = randomstring.generate(7)
     let shopping_list_non_empty_name = randomstring.generate(7)
+    let invalid_token = randomstring.generate(10)
+    let expired_token = jwt.sign({
+        "_id": randomstring.generate(7),
+        "email": randomstring.generate(7),
+    }, privateKEY, {
+        'issuer': 'Shopping List API',
+        'expiresIn': 0,
+        'algorithm':  'RS256',
+    });
+
 
     before(function (done) {
         const user_valid = randomstring.generate(7) + "@gmail.com";
@@ -99,6 +115,46 @@ describe('Shopping List Routes Test', () => {
                 });
         });
 
+        it('Create shopping list fail. Unauthorized. Invalid token.', (done) => {
+            chai.request(app)
+                .post('/shoppingList')
+                .set('Content-Type', 'application/json')
+                .set('token', invalid_token)
+                .send(JSON.stringify({
+                    "name": shopping_list_non_empty_name,
+                    "products": [
+                        { "name": "product_01", "amount": 1 },
+                        { "name": "product_02", "amount": 1 }
+                    ]
+                }))
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
+        it('Create shopping list fail. Unauthorized. Expired token.', (done) => {
+            chai.request(app)
+                .post('/shoppingList')
+                .set('Content-Type', 'application/json')
+                .set('token', expired_token)
+                .send(JSON.stringify({
+                    "name": shopping_list_non_empty_name,
+                    "products": [
+                        { "name": "product_01", "amount": 1 },
+                        { "name": "product_02", "amount": 1 }
+                    ]
+                }))
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
         it("Create shopping lists fail. Missing 'name' field.", (done) => {
             chai.request(app)
                 .post('/shoppingList')
@@ -140,7 +196,7 @@ describe('Shopping List Routes Test', () => {
                     res.body.should.be.a('object');
                     res.body.should.eql({
                         "message": 'Validation error.',
-                        "errors": [{ field: 'name', err_msg: 'Path `name` is required.' }]
+                        "errors": [{ field: 'products.0.name', err_msg: 'Path `name` is required.' }]
                     })
                     done();
                 });
@@ -165,7 +221,7 @@ describe('Shopping List Routes Test', () => {
                     res.body.should.be.a('object');
                     res.body.should.eql({
                         "message": 'Validation error.',
-                        "errors": [{ field: 'amount', err_msg: 'Path `amount` is required.' }]
+                        "errors": [{ field: 'products.0.amount', err_msg: 'Path `amount` is required.' }]
                     })
                     done();
                 });
@@ -190,7 +246,7 @@ describe('Shopping List Routes Test', () => {
                     res.body.should.be.a('object');
                     res.body.should.eql({
                         "message": 'Validation error.',
-                        "errors": [{ field: 'amount', err_msg: 'Cast to Number failed for value \"str\" at path \"amount\"', value: "str" }]
+                        "errors": [{ field: 'products.0.amount', err_msg: 'Cast to Number failed for value \"str\" at path \"amount\"', value: "str" }]
                     })
                     done();
                 });
@@ -256,6 +312,32 @@ describe('Shopping List Routes Test', () => {
         });
 
         it('Get shopping lists fail. Unauthorized. Token missing.', (done) => {
+            chai.request(app)
+                .get('/shoppingLists')
+                .set('token', invalid_token)
+                .send(JSON.stringify({ "email": registered_user, "password": registered_password }))
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
+        it('Get shopping lists fail. Unauthorized. Expired token.', (done) => {
+            chai.request(app)
+                .get('/shoppingLists')
+                .set('token', expired_token)
+                .send(JSON.stringify({ "email": registered_user, "password": registered_password }))
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
+        it('Get shopping lists fail. Unauthorized. Invalid token.', (done) => {
             chai.request(app)
                 .get('/shoppingLists')
                 .send(JSON.stringify({ "email": registered_user, "password": registered_password }))
@@ -331,6 +413,46 @@ describe('Shopping List Routes Test', () => {
                 });
         });
 
+        it('Update shopping list fail. Unauthorized. Invalid token.', (done) => {
+            chai.request(app)
+                .put('/shoppingList')
+                .set('Content-Type', 'application/json')
+                .set('token', invalid_token)
+                .send(JSON.stringify({
+                    "name": shopping_list_non_empty_name,
+                    "products": [
+                        { "name": "product_01", "amount": 1 },
+                        { "name": "product_02", "amount": 1 }
+                    ]
+                }))
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
+        it('Update shopping list fail. Unauthorized. Expired token.', (done) => {
+            chai.request(app)
+                .put('/shoppingList')
+                .set('Content-Type', 'application/json')
+                .set('token', expired_token)
+                .send(JSON.stringify({
+                    "name": shopping_list_non_empty_name,
+                    "products": [
+                        { "name": "product_01", "amount": 1 },
+                        { "name": "product_02", "amount": 1 }
+                    ]
+                }))
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
         it('Update shopping list fail. Body parameter missing: "name".', (done) => {
             chai.request(app)
                 .put('/shoppingList')
@@ -390,7 +512,7 @@ describe('Shopping List Routes Test', () => {
                     res.body.should.be.a('object');
                     res.body.should.eql({
                         "message": 'Validation error.',
-                        "errors": [{ field: 'name', err_msg: 'Path `name` is required.' }]
+                        "errors": [{ field: 'products.0.name', err_msg: 'Path `name` is required.' }]
                     })
                     done();
                 });
@@ -413,7 +535,7 @@ describe('Shopping List Routes Test', () => {
                     res.body.should.be.a('object');
                     res.body.should.eql({
                         "message": 'Validation error.',
-                        "errors": [{ field: 'amount', err_msg: 'Path `amount` is required.' }]
+                        "errors": [{ field: 'products.0.amount', err_msg: 'Path `amount` is required.' }]
                     })
                     done();
                 });
@@ -436,7 +558,7 @@ describe('Shopping List Routes Test', () => {
                     res.body.should.be.a('object');
                     res.body.should.eql({
                         "message": 'Validation error.',
-                        "errors": [{ field: 'amount', err_msg: 'Cast to Number failed for value \"str\" at path \"amount\"', value: "str" }]
+                        "errors": [{ field: 'products.0.amount', err_msg: 'Cast to Number failed for value \"str\" at path \"amount\"', value: "str" }]
                     })
                     done();
                 });
@@ -516,6 +638,30 @@ describe('Shopping List Routes Test', () => {
                 });
         });
 
+        it('Get shopping lists report fail. Unauthorized. Invalid token.', (done) => {
+            chai.request(app)
+                .get('/report')
+                .set('token', invalid_token)
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
+        it('Get shopping lists report fail. Unauthorized. Expired token.', (done) => {
+            chai.request(app)
+                .get('/report')
+                .set('token', expired_token)
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
         it("Get shopping lists report fail. Date parse error.", (done) => {
             chai.request(app)
                 .get('/report?from=2019-01-01T00:00:00Z&to=str')
@@ -552,6 +698,38 @@ describe('Shopping List Routes Test', () => {
             chai.request(app)
                 .delete('/shoppingList')
                 .set('Content-Type', 'application/json')
+                .send(JSON.stringify({
+                    "name": shopping_list_non_empty_name
+                }))
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
+        it('Delete shopping lists fail. Unauthorized. Invalid token.', (done) => {
+            chai.request(app)
+                .delete('/shoppingList')
+                .set('Content-Type', 'application/json')
+                .set('token', invalid_token)
+                .send(JSON.stringify({
+                    "name": shopping_list_non_empty_name
+                }))
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').and.to.be.eql('Forbidden. Not authorized.');
+                    done();
+                });
+        });
+
+        it('Delete shopping lists fail. Unauthorized. Expired token.', (done) => {
+            chai.request(app)
+                .delete('/shoppingList')
+                .set('Content-Type', 'application/json')
+                .set('token', expired_token)
                 .send(JSON.stringify({
                     "name": shopping_list_non_empty_name
                 }))

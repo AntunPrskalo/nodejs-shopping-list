@@ -20,7 +20,7 @@ mongoose.connect(mongodb_uri, {
     useUnifiedTopology: true,
     dbName: mongodb_database
 }).then(function (result) {
-    console.log('[SUCCESS] Connected to MongoDB');
+    console.log('Connected to MongoDB.');
     app.listen(8000)
 }).catch((error) => {
     console.log(error)
