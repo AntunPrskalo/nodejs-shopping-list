@@ -1,0 +1,249 @@
+{
+	"info": {
+		"_postman_id": "9e0b9b3d-b443-4823-9e89-000c6713cca7",
+		"name": "NodeJS Shopping List App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\": \"test@gmail.com\", \"password\" : \"12345\"}"
+				},
+				"url": {
+					"raw": "localhost:8000/register",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\": \"test@gmail.com\", \"password\" : \"12345\"}"
+				},
+				"url": {
+					"raw": "localhost:8000/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset Password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"currentPassword\": \"12345\",\n\t\"newPassword\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8000/resetPassword",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"resetPassword"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTlkNGI1NmJiM2U3YjI2YmQ2ZWUyYjkiLCJlbWFpbCI6InRlc3QyQGdtYWlsLmNvbSIsImlhdCI6MTU4NzM3MTA4MCwiZXhwIjoxNTg3MzcyODgwLCJpc3MiOiJTaG9wcGluZyBMaXN0IEFQSSJ9.V-7Bdat1LQ_0OWEIg6188RbyqmiiQVk4ary3i4bVkwDiCRI8fHf4LS6I0uC7DEHotspdDUNRl-1Vkkn2JYyXpkFnf9V6HnllOHizw3wBudecA36lf0LjShY51oUsFYLuj9l2CnW7uk2E8GzZL0jvFYffWewj6NHNHiu9YLR7zpPXTKHPEg5UMvXvKCH0_fN-dcsjFA1zlFNbreGbjqrWhWu372q3QgJ8lrLapgezisoIUEHMJ8oyiBiVj6GBu9STBT31Z2QnePpZoUmAW3ef7o61qJbOQJfv06WGTzkk1Uh16p5ZG8dMLpJPqeXGzOHMItNDNfjlFGlIQC0kAB5rl2fo3hsLWkq1-gVlDOWouU37Bg7SzgkDT_I0tpejb2yfZTznJhCKb33B6LEtgs-b49UV5ke0VN5SXcYvWIxgIllb20p16L-Mdl4gdQf3U1UnUDLV36pG15WSSRh8rWgM9Bpk8s90KInSLge3hhx7_XLpBTmCnNM5ur9Q4DVcyenRbzhjnyjC6X0_eWFdvA-irqvZVtvBuFGS6pLN6YLtq7NM0IReFqTpshudKmnQdKZ2lMqaHkzfSCgrLedThND6QzUIFEvbzdbeSN1PaTk4rU6O8a6gmzF5t0uQb7kiU_o4f7UcGnOp1B4v0ipAUwJhzXNv9nqqCDIhEPcwEfzvPsU",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Shopping Lists",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8000/shoppingLists",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"shoppingLists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Shopping List",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"list_01\",\n\t\"date\": \"2020-01-01\",\n\t\"products\": [{\"name\" : \"product_01\", \"amount\": 1}, {\"name\" : \"product_02\", \"amount\": 10}]\n}"
+				},
+				"url": {
+					"raw": "localhost:8000/shoppingList",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"shoppingList"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Shopping List",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"list_01\",\n\t\"newName\": \"list_02\",\n\t\"products\": [{\"name\" : \"product_01\", \"amount\": 100}, {\"name\" : \"product_02\", \"amount\": 200}]\n}"
+				},
+				"url": {
+					"raw": "localhost:8000/shoppingList",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"shoppingList"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Shopping List",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTlkYmY1ZWE2MTU5ODczZWUzZDgzMmYiLCJlbWFpbCI6ImFudHVuQGdtYWlsLmNvbSIsImlhdCI6MTU4NzM5NjQ1NiwiZXhwIjoxNTg3Mzk4MjU2LCJpc3MiOiJTaG9wcGluZyBMaXN0IEFQSSJ9.aIBPCGeSJMMeSdZCOXqLHq4bnEPtVHX1ywspJi-LF0XeND37sVGD0vkgCEHTe6mGOLgzxdni17ucBT-QKQ3CiJwMXi3sIgH0X0wtdhWfNp0Wj3RBfUnXjogqjCCDnMXZSCv21UvXvdbEGjmbaiaY6Wcvwax3y56UrtCh3hvUwW0TaZ-5WA6CTdoDuiGfmgea3ooDN_pc2jEq1QySVm6D8AGb1B-jJEt0tN62wCsB5MemNVSRIMKcoGchFfJkVrODfZMbwq_3tiYwIvkVWU0nzXQWqjAlAC3XJaekoXRdtAmf0TicA6t4NM3165xvXyMYA8d1L964eru6zIogSTWrI7jS63jqf7g3NzXUkzDKjBbPZTmiDrU4p2tjBufjneH_VV-pxMaA0JmJIy3nlelLyCHoGmPvElEc3P-4SyspMmvf1RnWjqm2E8Qsf3orRm9tmPal37Iz5SzIVWp0kNnNqV7yEj-mMzYVTk_uyWnjqgAQgGX6wcU32SB9Z2VD3u1uOXvYRFgbKqhqc2k4HR0v9pWHYDb7iq54ZAOx5zEjBuvNtSJIJyV6pqBntgmnENtbsTODmbbmpb6BoiEdx7m8Crlfm6cHgkK5xLw1agT8RavD00ILHToBot5j-Py5hZzdDw-GYYF_bYWPv9mw95gDSzX73Y3m1E1rwlNTB9Pc5Is",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"list_02\"}"
+				},
+				"url": {
+					"raw": "localhost:8000/shoppingList",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"shoppingList"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Products Report",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8000/report?from=2019-01-01T00:00:00Z&to=2021-01-01T00:00:00Z",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"report"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "2019-01-01T00:00:00Z"
+						},
+						{
+							"key": "to",
+							"value": "2021-01-01T00:00:00Z"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

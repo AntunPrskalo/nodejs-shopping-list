@@ -12,18 +12,19 @@ services:
       volumes:
         - './data/mongodb/data:/data'
       command: 'mongod --smallfiles --logpath=/dev/null'
+      ports:
+        - 27017:27017
 
-    node-app:
-      container_name: 'node-app'
+    node-app-test:
+      container_name: 'node-app-test'
       depends_on:
         - "mongodb"
       build:
         context: .
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.test
       environment:
         MONGODB_URI: 'mongodb://root:password@mongodb:27017'
-        MONGODB_DATABASE: 'nodejs'
+        MONGODB_DATABASE: 'test'
         WAIT_HOSTS:  mongodb:27017
-        JWT_TTL_SECONDS: 30
       ports:
         - 8000:8000

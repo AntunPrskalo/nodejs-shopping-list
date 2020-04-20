@@ -31,7 +31,7 @@ function validateEmail() {
 
 function validatePassword() {
     if (this.isModified('password') && this.password.length < 5) {
-        throw new Error('Invalid email address.');
+        throw new Error('Password cannot have less than 5 characters');
     }
 
     return true

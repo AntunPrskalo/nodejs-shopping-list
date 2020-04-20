@@ -1,5 +1,5 @@
-data
 node_modules
 dist
-package-lock.json
+data
 jwtRS256.key*
+package-lock.json
