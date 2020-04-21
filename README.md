@@ -36,7 +36,6 @@
 | WAIT_HOSTS | Since NodeJS app doesn't wait for MongoDB to start, wait.sh script is configured to run and wait for MongoDB to be ready. | string | -
 | JWT_TTL_SECONDS | JWT expire time. IMPORTANT: Set to 60s for testing purposes in docker-compose file. | integer |1800
 
-
 ## API Requests
 
 | Action  | Request 
@@ -50,6 +49,11 @@
 | View Shopping list | GET /shoppingLists
 | Get Product report | GET /report
 
+## Authentication
+
+- Registered user is provided with JWT token when logs in.
+- Token send in every request in request header with 'token' as key.
+- When requests are sent from browser token is automatically attached to a cookie.
 
 # REST API
 
@@ -61,7 +65,7 @@ The REST API routes are described bellow.
 
 `POST /register`
 
-    curl -d '{"email":"user_01", "password":"xyz"}' -H "Content-Type: application/json" -X POST http://localhost:8000/register
+    curl -d '{"email":"user_01@gmail.com", "password":"xyz1234"}' -H "Content-Type: application/json" -X POST http://localhost:8000/register
 
 ### Body
 
@@ -95,7 +99,7 @@ The REST API routes are described bellow.
 
 `POST /login`
 
-    curl -d '{"email":"user_01", "password":"xyz"}' -H "Content-Type: application/json" -X POST http://localhost:8000/login
+    curl -d '{"email":"user_01@gmail.com", "password":"xyz1234"}' -H "Content-Type: application/json" -X POST http://localhost:8000/login
 
 ### Body
 
@@ -106,9 +110,10 @@ The REST API routes are described bellow.
 
 ### Valid Response
 
-    {
-        "message": "Login successful."
-    }
+{
+    "message": "Login successful.",
+    "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTlkZjUxMGUzNzZjYTAwMWIxODMwMjMiLCJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNTg3NDQ3NTgwLCJleHAiOjE1ODc0NDc2NDAsImlzcyI6IlNob3BwaW5nIExpc3QgQVBJIn0.JeBDQAAan11___t-UcEdUVMDLe6p_Yp7zP49USZV80nFqv7xvB5xrPA1BCFRmvNosqlQxgafLdH10b_gKYbLSCKovBLPSlIJMhximPjU-9HiJUCiXd8WRh9-mM9xuWO0UpUZJhXnnTeD0hFT3hU6N2q-6sHvbT1zwcbsELTDOaAZM3IMV0zAvLhcw4RDjX1lDrXGV3sUQLGZLCawHqP5qWCqu3X0maqc1eFMVPoGkqabsBus2IK_Yh7tIh9pWcTUmZIj6rxI4xAobI5pWdhQEYCrN8kM-i4FNfO_jEEdvA3cXbazzDskaSQJrhlzygMs22UE3WbEl0tQ_ckLnTF4qWpND-NrEgEPVyZtpKQffCp6O490bVRDzDHZNDyNTJqJzE-sTOxHjSW3qmd4c_yldVRnfu6oN6LhpgEAzn5arB4IRy8B7my1yg_huHFK-_cdJSMuCTDWFckElppSE4U7DVesELgSlxiuGfb-AohV0swwNHPRUneKtU8SLVVCaDML8W1-1MHBJx6pCtPY2XsiPUiP5kJxn-m_cjxpMDHviWOpgBIF_o4OP0-zoz-nqfPrf-IgGkkCK3jjN9-_JM8ibyXh-m3t1c4hJ9a3_kMdpQt7kDFQX1WYub25dR9Hphk5_Nj0KOzg3IZIJBHpV-0LZWn_SUM9duYMfmF3a6JQbIY"
+}
 
 ### Incorrect password Error Response
 
@@ -306,7 +311,7 @@ The REST API routes are described bellow.
 
 `DELETE /shoppingList`
 
-    curl -d '{"name":"list_02"} -H "Content-Type: application/json" -X DELETE http://localhost:8000/shoppingList
+    curl -d '{"name":"list_02"}' -H "Content-Type: application/json" -X DELETE http://localhost:8000/shoppingList
 
 ### Body
 
@@ -338,7 +343,7 @@ The REST API routes are described bellow.
 
 `GET /report?from={datetime}&to={datetime}`
 
-    curl -X GET http:localhost:8000/report?from=2020-01-01T00:00:00Z&to=2021-01-01T00:00:00Z
+    curl -X GET http://localhost:8000/report?from=2020-01-01T00:00:00Z&to=2021-01-01T00:00:00Z
 
 ### URL Parameters
 
