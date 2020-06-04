@@ -1,0 +1,82 @@
+scalar DateType
+
+type Query {
+    shoppingLists: [ShoppingList!]!
+    report(data: ReportInput): [ProductReport!]! 
+}
+
+type Mutation {
+    register(data: UserInput!): User!
+    login(data: UserInput!): LoginOutput!
+    resetPassword(data: ResetPasswordInput!): User!
+    createShoppingList(data: CreateShoppingListInput!): ShoppingList!
+    updateShoppingList(data: UpdateShoppingListInput!): ShoppingList!
+    deleteShoppingList(data: DeleteShoppingListInput!): ShoppingList!
+}
+
+type User {
+    _id: ID!
+    email: String!
+    password: String!
+}
+
+type ShoppingList {
+    _id: ID!
+    name: String!
+    date: DateType!
+    user_id: ID!
+    products: [Product!]
+}
+
+type Product {
+    _id: ID!
+    name: String!
+    amount: Int!
+}
+
+input UserInput {
+    email: String!
+    password: String!
+}
+
+input ResetPasswordInput {
+    currentPassword: String!
+    newPassword: String!
+}
+
+input CreateShoppingListInput {
+    name: String!
+    date: String
+    products: [ProductInput!]   
+}
+
+input UpdateShoppingListInput {
+    name: String!
+    newName: String
+    date: String
+    products: [ProductInput!]   
+}
+
+input ProductInput {
+    name: String!
+    amount: Int!
+}
+
+input DeleteShoppingListInput {
+    name: String!
+}
+
+input ReportInput {
+    from: String
+    to: String
+}
+
+type LoginOutput {
+    user: User!
+    token: String!
+}
+
+type ProductReport {
+    product_name: String!
+    total_amount: Int!
+}

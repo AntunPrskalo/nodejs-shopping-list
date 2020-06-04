@@ -4,7 +4,7 @@ interface IList extends Document {
     name: string,
     id: string,
     user_id: Types.ObjectId,
-    date: string,
+    date: Date,
     products: Array<IProduct>
 }
 
@@ -13,21 +13,8 @@ interface IProduct extends Document {
     amount: number
 }
 
-async function validateUniqueName() {
-
-    if (this.isModified('name')) {
-        let result = await this.constructor.findOne({"user_id": this.user_id, "name": this.name})
-
-        if (result) {
-            throw new Error('Shopping list already exists.');
-        }
-    }
-
-    return true
-}
-
 const ShoppingListSchema: Schema = new Schema({
-    name: { type: String, required: true, validate: validateUniqueName},
+    name: { type: String, required: true},
     user_id: { type: Schema.Types.ObjectId, required: true},
     date: {type: Date, default: Date.now()},
     products: [{
@@ -36,17 +23,4 @@ const ShoppingListSchema: Schema = new Schema({
     }]
 }, { versionKey: false });
   
-ShoppingListSchema.statics.parseValidationError = function (error: Error.ValidationError): Array<Object> {
-    let response_arr = []
-    for (let prop in error.errors) {
-        let response_ob = {};
-        response_ob['field'] = prop;
-        response_ob['value'] = error.errors[prop].value;
-        response_ob['err_msg'] = error.errors[prop].message;
-        response_arr.push(response_ob)
-    }
-
-    return response_arr;
-}
-
 export default model<IList>("ShoppingList", ShoppingListSchema)

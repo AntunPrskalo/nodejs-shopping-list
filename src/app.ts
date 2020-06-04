@@ -1,29 +1,42 @@
 import mongoose from 'mongoose';
-import express from 'express';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import user_router from './routes/user';
-import shopping_list_router from './routes/shopping_list';
+import { GraphQLServer, PubSub } from 'graphql-yoga'
+import UserModel from './model/user'
+import ShoppingListModel from './model/shopping_list'
+import { Mutation } from './resolvers/Mutation'
+import { Query } from './resolvers/Query'
+import { DateType } from './resolvers/DateType'
 
-const app = express()
-app.use(bodyParser.json())
-app.use(cookieParser())
-app.use('/', user_router);
-app.use('/', shopping_list_router);
+const mongodb_uri: string = 'mongodb://root:password@localhost:27017'
+const mongodb_database: string = 'nodejs'
 
-const mongodb_uri: string = process.env.MONGODB_URI
-const mongodb_database: string = process.env.MONGODB_DATABASE
+const mongooseOps = {
+    'useCreateIndex': true,
+    'useNewUrlParser': true,
+    'useUnifiedTopology': true,
+    'dbName': mongodb_database
+}
 
-mongoose.connect(mongodb_uri, {
-    useCreateIndex: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    dbName: mongodb_database
-}).then(function (result) {
+const server = new GraphQLServer({
+    typeDefs: './src/schema.graphql',
+    resolvers: {
+        Mutation,
+        Query,
+        DateType
+    },
+    context(request) {
+        return {
+            request,
+            UserModel,
+            ShoppingListModel
+        }
+    }
+})
+
+mongoose.connect(mongodb_uri, mongooseOps).then((result) => {
     console.log('Connected to MongoDB.');
-    app.listen(8000)
+    return server.start()
+}).then((result) => {
+    console.log('GraphQL server is running.');
 }).catch((error) => {
     console.log(error)
 });
-
-module.exports = app

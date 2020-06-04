@@ -9,18 +9,6 @@ interface IUser extends Document {
     password: string
 }
 
-async function validateUniqueEmail() {
-    if (this.checkUniqueness && this.isModified('email')) {
-        let result = await this.constructor.findOne({"email": this.email})
-
-        if (result) {
-            throw new Error('User already exists.');
-        }
-    }
-
-    return true
-}
-
 function validateEmail() {
     if (this.isModified('email') && !this.email.match(email_regex)) {
         throw new Error('Invalid email address.');
@@ -38,10 +26,7 @@ function validatePassword() {
 }
 
 const UserSchema: Schema = new Schema({
-    email: { type: String, required: true, unique: true, validate: [
-        {validator: validateEmail}, 
-        {validator: validateUniqueEmail}
-    ]},
+    email: { type: String, required: true, unique: true, validate: validateEmail},
     password: { type: String, required: true, validate: validatePassword},
 })
 
@@ -66,8 +51,4 @@ UserSchema.statics.parseValidationError = function (error: Error.ValidationError
     return response_arr;
 }
 
-UserSchema.virtual('checkUniqueness')
-    .get(function() {return this._checkUniqueness;})
-    .set(function(checkUniqueness) {return this._checkUniqueness = checkUniqueness});
-  
 export default model<IUser>("User", UserSchema)

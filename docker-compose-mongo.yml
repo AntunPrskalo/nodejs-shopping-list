@@ -1,0 +1,16 @@
+version: '2'
+services:
+
+    mongodb:
+      image: 'mongo:4.0'
+      container_name: 'mongo'
+      environment:
+        MONGO_DATA_DIR: '/data/db'
+        MONGO_LOG_DIR: '/dev/null'
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: password
+      volumes:
+        - './data/mongodb/data:/data'
+      command: 'mongod --smallfiles --logpath=/dev/null'
+      ports:
+        - 27017:27017

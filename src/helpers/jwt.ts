@@ -8,7 +8,7 @@ const publicKEY  = fs.readFileSync(path.join(__dirname, '../../jwtRS256.key.pub'
 
 const opt = {
     'issuer': 'Shopping List API',
-    'expiresIn': (!isNaN(parseInt(process.env.JWT_TTL_SECONDS))) ? parseInt(process.env.JWT_TTL_SECONDS) : 30*60,
+    'expiresIn': (!isNaN(parseInt(process.env.JWT_TTL_SECONDS))) ? parseInt(process.env.JWT_TTL_SECONDS) : 10000*60,
     'algorithm':  'RS256',
 }
 
@@ -38,3 +38,13 @@ export const jwt_token = function(payload) {
 export const jwt_get_expiry_time = function() {
     return opt.expiresIn
 } 
+
+export const verify_token = (request) => {
+    const token = request.request.headers.token
+
+    if (!token) {
+        throw new Error('Authorization required.')
+    }
+
+    return jwt.verify(token, publicKEY, opt)
+}
